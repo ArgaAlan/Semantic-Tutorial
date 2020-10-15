@@ -1,0 +1,191 @@
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Vue Semestre i</title>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link href="Semantic-UI-CSS-master/semantic.min.css" rel="stylesheet" type="text/css">
+    <script
+            crossorigin="anonymous"
+            integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+            src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="semantic/dist/semantic.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.20/lodash.min.js"></script>
+    <style>
+
+    </style>
+
+</head>
+<body>
+
+<!-- b-vind sirve para hacer modificaciones de atributos
+     b-html procesa una entrada como HTML-->
+<div id="lugardetrabajo">
+    <div v-for="img in getImagenes">
+        <img src="img.src" alt="img.name">
+    </div>
+    <div v-if="libros.length==2">
+        <h1 style="color: #22be34">
+            No hay novedades
+        </h1>
+    </div>
+    <div class="ui form">
+        <div class="field">
+            <label>Titulo</label>
+            <input type="text" v-model="libros.titulo">
+        </div>
+        <div class="field">
+            <label>Autor</label>
+            <input type="text" v-model="libros.autor">
+        </div>
+        <div class="field">
+            <label>Editorial</label>
+            <input type="text" v-model="libros.editorial">
+        </div>
+        <div class="field">
+            <label>Cantidad</label>
+            <input type="number" v-model="libros.cantidad" value="0">
+        </div>
+        <div class="field">
+            <label>Precio</label>
+            <input type="number" v-model="libros.precio">
+        </div>
+        <div class="field">
+            <label>Descuento</label>
+            <input type="number" v-model="libros.descuento" value="0">
+        </div>
+    </div>
+    <button class="ui button" v-on:click="metodo">
+        Otro libro
+    </button>
+    <p>
+        Libros en existencia: {{parseInt(sumar)}}
+    </p>
+
+    <!--
+        <div v-for="l in ordenarLibros">
+            <li>{{l.autor}} {{l.titulo}}
+                <p v-if="l.oferta === true" style="color: red">
+                    EN OFERTA
+                </p>
+            </li>
+        </div>
+    -->
+
+    <div v-for="l in ordenarLibros">
+        <li style="color: red" v-if="l.oferta === true">
+            {{l.autor}}, {{l.titulo}}, {{l.editorial}}. Cantidad: {{parseInt(l.cantidad)}} --EN OFERTA--
+            Precio: <strike>${{l.precio}}</strike> Descuento: {{l.descuento}}% <p style="color: #22be34">Precio final:
+            ${{l.precioDesc}}</p>
+        </li>
+        <li v-else>
+            {{l.autor}}, {{l.titulo}}, {{l.editorial}}. Cantidad: {{parseInt(l.cantidad)}}
+            Precio: ${{l.precio}}
+        </li>
+    </div>
+
+</div>
+
+<script type="text/javascript">
+    //Una instancia de Vue que manejará esa área del documento #lugardetrabajo
+    c = new Vue({
+        el: "#lugardetrabajo",
+        data: {
+            imgs: [],
+            categorias:{},
+            nombre: "La elegante vagancia",
+            libros: [
+                {
+                    autor: "Ray Bradbury",
+                    titulo: "Fahrenheit 451",
+                    oferta: true,
+                    cantidad: 8,
+                    editorial: "Fondo de Cultura",
+                    descuento: 10.0,
+                    precio: 200.00,
+                    precioDesc: 0.0
+                },
+                {
+                    autor: "Arthur C. Clarke",
+                    titulo: "El fin de la infancia",
+                    oferta: false,
+                    cantidad: 15,
+                    editorial: "Planeta",
+                    descuento: 0.0,
+                    precio: 250.00,
+                    precioDesc: 0.0
+                }
+            ]
+        },
+        methods: {
+            metodo: function () {
+                // console.log("click");
+                this.libros.push({
+                    'autor': this.libros.autor,
+                    'titulo': this.libros.titulo,
+                    'oferta': this.libros.oferta,
+                    'cantidad': parseInt(this.libros.cantidad),
+                    'editorial': this.libros.editorial,
+                    'precio': this.libros.precio,
+                    'descuento': this.libros.descuento,
+                    'precioDescuento': this.libros.precioDesc
+                });
+            },
+            getImagenes: function () {
+                for (let i = 0; i < 2; i++) {
+                    this.imgs.push({
+                        'src': categorias.categories.items[i].icons[i].url,
+                        'name': categorias.categories.items[i].icons[i].url
+                    });
+                }
+                return this.imgs;
+            }
+        },
+        computed: {
+            ordenarLibros: function () {
+                console.log("computed");
+                this.calcDescuento;
+                return _.orderBy(this.libros, ['autor']);
+            },
+            sumar: function () {
+                var resultado = 0;
+                for (var i = 0; i < this.libros.length; i++) {
+                    resultado += parseInt(this.libros[i].cantidad);
+                }
+                return parseInt(resultado);
+            },
+            calcDescuento: function () {
+                for (var i = 0; i < this.libros.length; i++) {
+                    if (this.libros[i].descuento > 0) {
+                        this.libros[i].oferta = true;
+                    }
+                    this.libros[i].precioDesc = this.libros[i].precio - ((this.libros[i].descuento / 100) * this.libros[i].precio);
+                }
+            }
+        },
+        watch: {
+            oferta: function (data) {
+                console.log("oferta fue modificado");
+            }
+        },
+        created() {
+            console.log("instancia creada");
+            fetch("https://api.spotify.com/v1/browse/categories", {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': 'Bearer BQDXcS31MVdhnnp9pzPjMv8oOR9YZe8H9FahjQ8e3pqTtcbrobz9iLzws-jLLplMdimoj-RA1O4usSGGLFQrs7uyM0gxoMNTYq3dq_w5PDiOZiOfBkj-0A2YYw7jmdXLta0NnRIkbQ0MYSgr8iYazCQ2j93JsvGPgP8'
+                    }
+                }
+            )
+                .then(response => response.json())
+                .then(data => (this.categorias = data));
+        }
+    });
+</script>
+</body>
+</html>
+<!--
+Agregar campos de cantidad y editorial.
+Agregar campos de texto para cada uno
+Mostrar elementos para sumar
+-->
