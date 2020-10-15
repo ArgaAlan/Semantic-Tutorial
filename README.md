@@ -1,5 +1,7 @@
 HOW TO INSTALL:
 
+OPTION 1: CDN
+
 STEP 1 - Include this lines in the head of your HTML file 
 
       <head>
@@ -11,3 +13,30 @@ STEP 1 - Include this lines in the head of your HTML file
       </head>
       
 STEP 2 - Done! (Start coding)
+
+OPTION 2: USING NODE JS
+
+STEP 1 - Install Nodejs
+
+STEP 2 - Install Gulp
+```
+npm i -g gulp
+```
+
+STEP 3 - Install Semantic UI
+```
+      npm install semantic-ui --save
+      cd semantic/
+      gulp build
+```
+
+STEP 4 - Include in your HTML
+
+```
+<link rel="stylesheet" type="text/css" href="semantic/dist/semantic.min.css">
+<script
+  src="https://code.jquery.com/jquery-3.1.1.min.js"
+  integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+  crossorigin="anonymous"></script>
+<script src="semantic/dist/semantic.min.js"></script>
+```
